@@ -7,6 +7,7 @@
     android:padding="5pt">
 
     <LinearLayout
+        android:id="@+id/ll_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="0"
@@ -25,15 +26,16 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_gravity="center|center_horizontal|center_vertical"
             android:layout_weight="0"
-            android:orientation="vertical">
+            android:gravity="center|center_horizontal|center_vertical"
+            android:orientation="vertical"
+            android:paddingLeft="10pt">
 
             <TextView
                 android:id="@+id/tvName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="15pt"
-                android:paddingTop="10pt"
                 android:text="Computer Science and Engineering Department"
                 android:textSize="20sp"
                 android:textStyle="bold" />

@@ -7,8 +7,15 @@
     android:orientation="horizontal"
     tools:context=".MainActivity">
 
-    <ListView
-        android:id="@+id/tvListView"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/tvListView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
 </LinearLayout>
