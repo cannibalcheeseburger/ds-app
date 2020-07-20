@@ -61,6 +61,13 @@ class MainActivity : AppCompatActivity() {
             var myView = inflater.inflate(R.layout.department,null)
             myView.tvName.text = Dept.name
             myView.ivDept.setImageResource(Dept.image!!)
+            when(position%4){
+                1-> myView.ll_ok.setBackground(this.context!!.getDrawable(R.drawable.background2))
+                2-> myView.ll_ok.setBackground(this.context!!.getDrawable(R.drawable.background4))
+                3-> myView.ll_ok.setBackground(this.context!!.getDrawable(R.drawable.background))
+                0-> myView.ll_ok.setBackground(this.context!!.getDrawable(R.drawable.background3))
+
+            }
             myView.setOnClickListener{
                 val intent = Intent(context,DeptInfo::class.java)
                 intent.putExtra("name",Dept.name!!)
