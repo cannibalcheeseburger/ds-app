@@ -98,7 +98,7 @@
 
 \chapter{Abstract}		
 
-Our goal was to develop a android application using list and file structure implementation as per instructions. This Android application is basically coded in Kotlin. This Android application will provide our 
+Our goal was to develop a android application Implementing ListView using datastructure such as LinkedList. This Android application is basically coded in Kotlin. This Android application will provide our 
 student and other people with the brief information of each and every department (i.e about different branches of engineering that are available in our institute) to have the better idea of every department of 
 our institute and its courses available in that respective department. By developing this Android application, our basic idea was to provide the clear idea of how linked list, queue, stack and sets can be used 
 to develop a well working an application.
@@ -180,24 +180,156 @@ Doubly-linked list implementation of the List and Deque interfaces. Implements a
 All of the operations perform as could be expected for a doubly-linked list. Operations that index into the list will traverse the list from the beginning or the end, whichever is closer to the specified index.
 	\begin{figure}[H]
 		\centering
-		\includegraphics[scale=0.75]{./img/Screenshot (145).png}
+    \includegraphics[scale=0.75]{./img/Screenshot (145).png}
+  
 	\end{figure}
 
 
-\chapter{Conclusion}
-This Project was a great opportunity for us to discover new fields and ways of working.Doing this project was very interesting since our skills were really complementary. Learning kotlin and languages for this project was truly enthralling and opened new vistas for us. Indeed, it forced us to understand sound synthesis from scratch, something that always interested us. We started the project with no clear objective, and our main goal at the beginning was to build an application which will further benefit our youth in the coming future
+
+\chapter{ListView Layout Design}
+
+The display of elements in a list is a very common pattern in mobile applications. The user sees a list of items and can scroll through them. 
+Typically the user interacts with the list via the toolbar, for example, via a button which refreshes the list. Individual list items can be selected. This selection can update the toolbar or can trigger a detailed screen for the selection. 
+
+
+Every line in the widget displaying the data consists of a layout which can be as complex as you want. A typical line in a list has an image on the left side and two text lines in the middle as we have used here.
+With Department picture on the left and Name of Department centered on the right.
+
+\vspace{15pt}
+
 \begin{figure}[H]
-  \centering
-  \begin{minipage}[b]{0.4\textwidth}
-    \includegraphics[width=\textwidth]{./img/Capture1.png}
-    \caption{user interface 01}
-  \end{minipage}
-  \hfill
-  \begin{minipage}[b]{0.4\textwidth}
-    \includegraphics[width=\textwidth]{./img/Capture2.png}
-    \caption{user interface 02}
-  \end{minipage}
-\end{figure}
+	\centering
+		\includegraphics[scale=0.2]{./img/listview_2.png}
+  \end{figure}
+
+  \vspace{5pt}
+
+We have to design the layout only once as this layout will be used for every item on the ListView.
+This the crucial step as without designing a layout we wont be able to display the view 
+anywhere , say activity\_main.xml layout or any other layout for that matter
+
+
+
+
+\chapter{Load ListView with data using LinkedList}
+
+Now, that the Layout for ListView has been created ,it needs to be populated with data.
+In order to do this we use LinkedList.
+First ,LinkedList is loaded with all the data that needs to be ported to ListView like we have
+below in the LinkedList named ListOfDept.
+
+\vspace{15pt}
+
+\begin{figure}[H]
+	\centering
+		\includegraphics[scale=0.5]{./img/load_linked.PNG}
+  \end{figure}
+
+  \vspace{5pt}
+
+
+After that we need to declare and implement our custom Adapter .An adapter manages the data model and adapts it to the individual entries in the widget. An adapter extends the BaseAdapter class.
+The adapter would inflate the layout for each row in its getView() method and assign the data to the individual views in the row.
+The adapter is assigned to the ListView via the setAdapter method on the ListView object.
+
+
+\vspace{15pt}
+
+\begin{figure}[H]
+	\centering
+		\includegraphics[scale=0.5]{./img/adapter.PNG}
+  \end{figure}
+
+  \vspace{5pt}
+
+Main 2 functions in our adapter are  getView() and getCount().
+getCount() returns the size of LinkedList which will be used in getView() func 
+with ultimately return us view.
+We have customized getView() function to return every element in list with different
+background.
+And a setOnClickListener has been setup to take us to another activity which gives detail 
+about that particular department.
+
+
+\chapter{ListView events}
+
+After populating ListView with LinkedList data using our custom Adapter , new activity needs
+to be created in order so that on clicking an item in ListView we are taken to Details about
+that Department.
+
+\vspace{15pt}
+\begin{lstlisting}[ caption=setOnClickListener example]
+myView.setOnClickListener{
+    val intent = Intent(context,DeptInfo::class.java)
+    intent.putExtra("name",Dept.name!!)
+    intent.putExtra("des",Dept.des!!)
+    intent.putExtra("image",Dept.image!!)
+    context!!.startActivity(intent)
+}
+
+\end{lstlisting}
+
+Here we have and example of such event which is triggered on clicking on an element of ListView.
+
+Other than that we need to create a new activity and a layout.
+The new layout we create must contain the picture of department , name and description
+of the Department.
+We use Constraint we rather than using LinearLayout that we used to wrap the listview.
+Our new Layout looks something like this.
+
+
+\vspace{15pt}
+
+\begin{figure}[H]
+	\centering
+		\includegraphics[scale=0.2]{./img/new_act.png}
+  \end{figure}
+
+  \vspace{5pt}
+
+
+  Last thing required to implement is a new activity that is linked to the new layout we just 
+  created.
+  In the new activity we will provide the Name,description and the image of department which 
+  will be given to the Layout.
+
+  \begin{figure}[H]
+    \centering
+      \includegraphics[scale=0.7]{./img/act.PNG}
+    \end{figure}
+  
+    \vspace{5pt}
+
+  All the Components required for the app are successfully implemented .
+  Now we can just compile the whole code and used an AVD(Android Virtual Device)
+  to view the finished application . We can also build the app as apk and use on an 
+  actual android device. Built app will look something like:
+
+  \begin{figure}[H]
+    \centering
+    \begin{minipage}[b]{0.3\textwidth}
+      \includegraphics[width=\textwidth]{./img/PREVIEW1.png}
+      \caption{activity\_main}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[b]{0.3\textwidth}
+      \includegraphics[width=\textwidth]{./img/PREVIEW2.png}
+      \caption{activity\_dept\_info}
+    \end{minipage}
+  \end{figure}
+
+
+\chapter{Conclusion}
+
+This Project was a great opportunity for us to discover new fields and ways of working.
+We have successfully implemented ListView with LinkedList in an android application.
+LinkedList provides us with efficient form of storing data which needs to be retrieved
+sequentially and ListView provides us with the ability to dynamically create lists 
+with  custom layouts and with functionality of incepting tasks(such as opening a new activity) on clicking on a list item.
+
+All these Components combined provide us with an effective android application that displays
+the description of various departments of Engineering in National Institute of Technology
+Hamirpur.
 
 
 
