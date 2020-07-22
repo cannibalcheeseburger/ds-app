@@ -147,19 +147,8 @@ An Android Virtual Device (AVD) is a configuration that defines the characterist
 
 
 
- \chapter{Workflow and Components used}
+ \chapter{Components used}
 
-The basic workflow to develop a working android application can be explained using the image given below:-
-\begin{figure}[H]
-	\centering
-	\includegraphics[scale=0.3]{./img/developer-workflow_2x.png}
-	\caption{The workflow to develop an application .}
-\end{figure}
-\vskip 7cm
-
-
-
-\textbf{{\large{Components used for Building the android application}}}
 \section{ListView (View)}
 \vskip 0.5cm
 Android ListView is a view which contains the group of items and displays in a scrollable list. ListView is implemented by importing android.widget.ListView class. 
@@ -195,6 +184,57 @@ Typically the user interacts with the list via the toolbar, for example, via a b
 Every line in the widget displaying the data consists of a layout which can be as complex as you want. A typical line in a list has an image on the left side and two text lines in the middle as we have used here.
 With Department picture on the left and Name of Department centered on the right.
 
+\vspace{10pt}
+
+\begin{lstlisting}[ caption=department.xml]
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="5pt">
+
+    <LinearLayout
+        android:id="@+id/ll_ok"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="0"
+        android:background="@drawable/background"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/ivDept"
+            android:layout_width="50pt"
+            android:layout_height="50pt"
+            android:layout_marginLeft="3pt"
+            android:layout_weight="0"
+            android:padding="2pt"
+            app:srcCompat="@drawable/cse" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center|center_horizontal|center_vertical"
+            android:layout_weight="0"
+            android:gravity="center|center_horizontal|center_vertical"
+            android:orientation="vertical"
+            android:paddingLeft="10pt">
+
+            <TextView
+                android:id="@+id/tvName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Computer Science and Engineering Department"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
+\end{lstlisting}
+
 \vspace{15pt}
 
 \begin{figure}[H]
@@ -220,27 +260,97 @@ below in the LinkedList named ListOfDept.
 
 \vspace{15pt}
 
-\begin{figure}[H]
-	\centering
-		\includegraphics[scale=0.5]{./img/load_linked.PNG}
-  \end{figure}
+\begin{lstlisting}[caption=MainActivity.kt]
+import ...
+class MainActivity : AppCompatActivity() {
 
-  \vspace{5pt}
+  var ListOfDept = LinkedList<Department>()
+  var adapter:DeptAdapter?=null
+  override fun onCreate(savedInstanceState: Bundle?) {
+      super.onCreate(savedInstanceState)
+      setContentView(R.layout.activity_main)
+      //load departments
+
+      ListOfDept.add(Department("Computer Science and Engineering", 
+      getString(R.string.CSE_des),R.drawable.cse))
+
+      ListOfDept.add(Department("Electronic and Comunication Engineering",
+      getString(R.string.ECE_des)  ,R.drawable.ece))
+      
+      ListOfDept.add(Department("Civil Engineering",
+      getString(R.string.CE_des),R.drawable.ce))
+
+      
+      ListOfDept.add(Department("Mechanical Engineering",
+      getString(R.string.ME_des),R.drawable.me))
+
+      
+      ListOfDept.add(Department("Chemical Engineering",
+      getString(R.string.CE_des),R.drawable.che))
+
+      ListOfDept.add(Department("Electrical Engineering",
+      getString(R.string.EE_des),R.drawable.ee))
+
+      //initialise adapter with array list
+      adapter = DeptAdapter(this,ListOfDept)
+      tvListView.adapter = adapter
+
+  }
+\end{lstlisting}
 
 
 After that we need to declare and implement our custom Adapter .An adapter manages the data model and adapts it to the individual entries in the widget. An adapter extends the BaseAdapter class.
 The adapter would inflate the layout for each row in its getView() method and assign the data to the individual views in the row.
 The adapter is assigned to the ListView via the setAdapter method on the ListView object.
 
+\vspace{10pt}
+\begin{lstlisting}[caption=Defining adapter in MainActivity.kt]
+  class DeptAdapter:BaseAdapter{
 
-\vspace{15pt}
+        var ListOfDept = LinkedList<Department>()
+        var context:Context?=null
+        constructor(context: Context, ListOfDept: LinkedList<Department>):super(){
+            this.ListOfDept = ListOfDept
+            this.context = context
+        }
 
-\begin{figure}[H]
-	\centering
-		\includegraphics[scale=0.5]{./img/adapter.PNG}
-  \end{figure}
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+            val Dept = ListOfDept[position]
+            var inflater = context!!.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            var myView = inflater.inflate(R.layout.department,null)
+            myView.tvName.text = Dept.name
+            myView.ivDept.setImageResource(Dept.image!!)
+            when(position%4){
+                1-> myView.ll_ok.setBackground(this.context!!.getDrawable(R.drawable.background2))
+                2-> myView.ll_ok.setBackground(this.context!!.getDrawable(R.drawable.background4))
+                3-> myView.ll_ok.setBackground(this.context!!.getDrawable(R.drawable.background))
+                0-> myView.ll_ok.setBackground(this.context!!.getDrawable(R.drawable.background3))
 
-  \vspace{5pt}
+            }
+            myView.setOnClickListener{
+                val intent = Intent(context,DeptInfo::class.java)
+                intent.putExtra("name",Dept.name!!)
+                intent.putExtra("des",Dept.des!!)
+                intent.putExtra("image",Dept.image!!)
+                context!!.startActivity(intent)
+            }
+            return myView
+        }
+
+        override fun getItem(position: Int): Any {
+            return ListOfDept[position]
+        }
+
+        override fun getItemId(position: Int): Long {
+            return position.toLong()
+        }
+
+        override fun getCount(): Int {
+            return ListOfDept.size
+        }
+
+    }
+\end{lstlisting}
 
 Main 2 functions in our adapter are  getView() and getCount().
 getCount() returns the size of LinkedList which will be used in getView() func 
@@ -280,6 +390,60 @@ Our new Layout looks something like this.
 
 \vspace{15pt}
 
+\begin{lstlisting}[ caption=activity\_dept\_info.xml]
+  
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10pt"
+        tools:context=".DeptInfo">
+
+        <ImageView
+            android:id="@+id/ivDept"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.473"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/cse" />
+
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Computer Science And Engineering"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ivDept"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/tvDes"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
+            android:gravity="center|center_horizontal|center_vertical"
+            android:text="@string/CE_des"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.652"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvName" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
+
+\end{lstlisting}
+
 \begin{figure}[H]
 	\centering
 		\includegraphics[scale=0.2]{./img/new_act.png}
@@ -293,28 +457,47 @@ Our new Layout looks something like this.
   In the new activity we will provide the Name,description and the image of department which 
   will be given to the Layout.
 
-  \begin{figure}[H]
-    \centering
-      \includegraphics[scale=0.7]{./img/act.PNG}
-    \end{figure}
-  
-    \vspace{5pt}
+\vspace{10pt}
+\begin{lstlisting}[caption=DeptInfo.kt]
+import ...
+class DeptInfo : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_dept_info)
+        val bundle: Bundle? = intent.extras
+        val name = bundle?.getString("name")
+        val des = bundle?.getString("des")
+        val image = bundle?.getInt("image")
+        ivDept.setImageResource(image!!)
+        tvName.text = name
+        tvDes.text = des
+    }
+}
+
+\end{lstlisting}
+
+\chapter{Output}
 
   All the Components required for the app are successfully implemented .
   Now we can just compile the whole code and used an AVD(Android Virtual Device)
   to view the finished application . We can also build the app as apk and use on an 
   actual android device. Built app will look something like:
-
+  \vspace{15pt}
+  \begin{center}
+    \textbf{Finished Android Application}
+  \end{center}
+   
   \begin{figure}[H]
     \centering
     \begin{minipage}[b]{0.3\textwidth}
       \includegraphics[width=\textwidth]{./img/PREVIEW1.png}
-      \caption{activity\_main}
+      \caption{MainActivity.kt}
     \end{minipage}
     \hfill
     \begin{minipage}[b]{0.3\textwidth}
       \includegraphics[width=\textwidth]{./img/PREVIEW2.png}
-      \caption{activity\_dept\_info}
+      \caption{DeptInfo.kt}
     \end{minipage}
   \end{figure}
 
